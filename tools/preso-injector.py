@@ -33,6 +33,10 @@ elif common.args.family == Protocols.AmazonBasics:
   if len(address) != 5:
     raise Exception('Invalid address: {0}'.format(common.args.address))  
   p = AmazonBasics(address)
+elif common.args.family == Protocols.Logitech:
+  if len(address) != 5:
+    raise Exception('Invalid address: {0}'.format(common.args.address))  
+  p = Logitech(address)
 
 # Initialize the injector instance
 i = Injector(p)
