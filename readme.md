@@ -2,7 +2,7 @@
 
 I was in the mood for some RF reverse-engineering, so I ordered a few presentation clickers and had a bit of fun. 
 
-This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 8 common presentation clickers.
+This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 10 common presentation clickers.
 
 ## History
 
