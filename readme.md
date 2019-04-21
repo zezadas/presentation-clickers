@@ -6,8 +6,8 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 
 ## History
 
-- 2019-04-20 - released first batch
-
+- 2019-04-20 - released first batch (8 devices)
+- 2019-04-21 - released second batch (5 devices)
 
 ## Devices Vulnerable to Keystroke Injection
 
