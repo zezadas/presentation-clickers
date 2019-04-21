@@ -22,7 +22,7 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 | Red Star Tech | [PR-819](https://www.amazon.com/Red-Star-Tec-Presentation-PR-819/dp/B015J5KB3G/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | DinoFire | [D06-DF-US](https://www.amazon.com/DinoFire-Presenter-Hyperlink-PowerPoint-Presentation/dp/B01410YNAM/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | TBBSC | [DSIT-60](https://www.amazon.com/gp/product/B01MY95EKA/) | [TBBSC DSIT-60](#TBBSC-DSIT-60) | BK2451 | 2019-04-21 |
-| Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | 
+| Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | BK2451 | 2019-04-21 |
 
 ## Protocols
 
