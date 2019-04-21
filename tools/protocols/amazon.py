@@ -18,15 +18,6 @@ class AmazonBasics(Protocol):
 
     super(AmazonBasics, self).__init__("AmazonBasics")
 
-    self.CRC16 = crcmod.mkCrcFun(0x11021, initCrc=0x0000, rev=False, xorOut=0x0000)
-   
-    self.LUT = [0]*256
-    lut = [0x0, 0x8, 0x4, 0xC, 0x2, 0xA, 0x6, 0xE, 0x1, 0x9, 0x5, 0xD, 0x3, 0xB, 0x7, 0xF]
-    for x in range(256):
-      b = lut.index(x>>4) | (lut.index(x&0xf)<< 4)
-      self.LUT[x] = b
-      print(x, b)
-
 
   # Configure the radio
   def configure_radio(self):

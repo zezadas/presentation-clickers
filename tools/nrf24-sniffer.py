@@ -27,6 +27,7 @@ common.parser.add_argument('-t', '--timeout', type=float, help='Channel timeout,
 common.parser.add_argument('-k', '--ack_timeout', type=int, help='ACK timeout in microseconds, accepts [250,4000], step 250', default=250)
 common.parser.add_argument('-r', '--retries', type=int, help='Auto retry limit, accepts [0,15]', default=1, choices=xrange(0, 16), metavar='RETRIES')
 common.parser.add_argument('-p', '--ping_payload', type=str, help='Ping payload, ex 0F:0F:0F:0F', default='0F:0F:0F:0F', metavar='PING_PAYLOAD')
+common.parser.add_argument('-R', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
 common.parse_and_init()
 
 # Parse the address
@@ -36,7 +37,10 @@ if len(address) < 2:
   raise Exception('Invalid address: {0}'.format(common.args.address))
 
 # Put the radio in sniffer mode (ESB w/o auto ACKs)
-common.radio.enter_sniffer_mode(address)
+rate = common.RF_RATE_2M
+if common.args.rate == '1M': rate = common.RF_RATE_1M
+elif common.args.rate == '250K': rate = common.RF_RATE_250K
+common.radio.enter_sniffer_mode(address, rate=rate)
 
 # Convert channel timeout from milliseconds to seconds
 timeout = float(common.args.timeout) / float(1000)
