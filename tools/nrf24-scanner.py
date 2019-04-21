@@ -24,6 +24,7 @@ from lib import common
 common.init_args('./nrf24-scanner.py')
 common.parser.add_argument('-p', '--prefix', type=str, help='Promiscuous mode address prefix', default='')
 common.parser.add_argument('-d', '--dwell', type=float, help='Dwell time per channel, in milliseconds', default='100')
+common.parser.add_argument('-r', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
 common.parse_and_init()
 
 # Parse the prefix addresses
@@ -32,7 +33,10 @@ if len(prefix_address) > 5:
   raise Exception('Invalid prefix address: {0}'.format(args.address))
 
 # Put the radio in promiscuous mode
-common.radio.enter_promiscuous_mode(prefix_address)
+rate = common.RF_RATE_2M
+if common.args.rate == '1M': rate = common.RF_RATE_1M
+elif common.args.rate == '250K': rate = common.RF_RATE_250K
+common.radio.enter_promiscuous_mode(prefix_address, rate=rate)
 
 # Convert dwell time from milliseconds to seconds
 dwell_time = common.args.dwell / 1000
