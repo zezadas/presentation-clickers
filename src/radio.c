@@ -6,7 +6,7 @@
 #include "nRF24LU1P.h"
 
 // Enter ESB promiscuous mode
-void enter_promiscuous_mode(uint8_t * prefix, uint8_t prefix_length, uint8_t rate)
+void enter_promiscuous_mode(uint8_t * prefix, uint8_t prefix_length, uint8_t rate, uint8_t addrlen)
 {
   // Update the promiscuous mode state
   int x;
@@ -14,6 +14,9 @@ void enter_promiscuous_mode(uint8_t * prefix, uint8_t prefix_length, uint8_t rat
   pm_prefix_length = prefix_length > 5 ? 5 : prefix_length;
   radio_mode = promiscuous;
   pm_payload_length = 32;
+
+  // Set the ESB address length
+  addr_len = addrlen;
 
   // CE low
   rfce = 0;
@@ -232,7 +235,7 @@ void handle_radio_request(uint8_t request, uint8_t * data)
   // Enter ESB promiscuous mode
   else if(request == ENTER_PROMISCUOUS_MODE)
   {
-    enter_promiscuous_mode(&data[2] /* address prefix */, data[1] /* prefix length */, data[0] /* rate */);
+    enter_promiscuous_mode(&data[3] /* address prefix */, data[2] /* prefix length */, data[0] /* rate */, data[1] /* address length */);
   }
 
   // Enter generic promiscuous mode
@@ -312,34 +315,34 @@ void handle_radio_request(uint8_t request, uint8_t * data)
           }
 
           // Read the payload length
-          payload_length = payload[5] >> 2;
+          payload_length = payload[addr_len] >> 2;
 
           // Check for a valid payload length, which is less than the usual 32 bytes
           // because we need to account for the packet header, CRC, and part or all
           // of the address bytes.
-          if(payload_length <= (pm_payload_length-9) + pm_prefix_length)
+          if(payload_length <= (pm_payload_length-4-(addr_len)) + pm_prefix_length)
           {
             // Read the given CRC
-            crc_given = (payload[6 + payload_length] << 9) | ((payload[7 + payload_length]) << 1);
+            crc_given = (payload[addr_len + 1 + payload_length] << 9) | ((payload[2 + addr_len + payload_length]) << 1);
             crc_given = (crc_given << 8) | (crc_given >> 8);
-            if(payload[8 + payload_length] & 0x80) crc_given |= 0x100;
+            if(payload[3 + addr_len + payload_length] & 0x80) crc_given |= 0x100;
 
             // Calculate the CRC
             crc = 0xFFFF;
-            for(x = 0; x < 6 + payload_length; x++) crc = crc_update(crc, payload[x], 8);
-            crc = crc_update(crc, payload[6 + payload_length] & 0x80, 1);
+            for(x = 0; x < 1 + addr_len + payload_length; x++) crc = crc_update(crc, payload[x], 8);
+            crc = crc_update(crc, payload[1 + addr_len + payload_length] & 0x80, 1);
             crc = (crc << 8) | (crc >> 8);
 
             // Verify the CRC
             if(crc == crc_given)
             {
               // Write the address to the output buffer
-              memcpy(in1buf, payload, 5);
+              memcpy(in1buf, payload, addr_len);
 
               // Write the ESB payload to the output buffer
               for(x = 0; x < payload_length + 3; x++)
-                in1buf[5+x] = ((payload[6 + x] << 1) & 0xFF) | (payload[7 + x] >> 7);
-              in1bc = 5 + payload_length;
+                in1buf[addr_len + x] = ((payload[1 + addr_len + x] << 1) & 0xFF) | (payload[2 + addr_len + x] >> 7);
+              in1bc = addr_len + payload_length;
               flush_rx();
               return;
             }

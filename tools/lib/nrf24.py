@@ -71,9 +71,9 @@ class nrf24:
       raise Exception('Cannot find USB dongle.')
 
   # Put the radio in pseudo-promiscuous mode
-  def enter_promiscuous_mode(self, prefix=[], rate=RF_RATE_2M):
+  def enter_promiscuous_mode(self, prefix=[], rate=RF_RATE_2M, addrlen=5):
     print(rate)
-    self.send_usb_command(ENTER_PROMISCUOUS_MODE, [rate, len(prefix)]+map(ord, prefix))
+    self.send_usb_command(ENTER_PROMISCUOUS_MODE, [rate, addrlen, len(prefix)]+map(ord, prefix))
     self.dongle.read(0x81, 64, timeout=nrf24.usb_timeout)
     if len(prefix) > 0:
       logging.debug('Entered promiscuous mode with address prefix {0}'.

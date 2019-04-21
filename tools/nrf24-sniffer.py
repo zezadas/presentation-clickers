@@ -27,7 +27,7 @@ common.parser.add_argument('-t', '--timeout', type=float, help='Channel timeout,
 common.parser.add_argument('-k', '--ack_timeout', type=int, help='ACK timeout in microseconds, accepts [250,4000], step 250', default=250)
 common.parser.add_argument('-r', '--retries', type=int, help='Auto retry limit, accepts [0,15]', default=1, choices=xrange(0, 16), metavar='RETRIES')
 common.parser.add_argument('-p', '--ping_payload', type=str, help='Ping payload, ex 0F:0F:0F:0F', default='0F:0F:0F:0F', metavar='PING_PAYLOAD')
-common.parser.add_argument('-r', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
+common.parser.add_argument('-R', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
 common.parse_and_init()
 
 # Parse the address

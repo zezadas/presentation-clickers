@@ -24,7 +24,8 @@ from lib import common
 common.init_args('./nrf24-scanner.py')
 common.parser.add_argument('-p', '--prefix', type=str, help='Promiscuous mode address prefix', default='')
 common.parser.add_argument('-d', '--dwell', type=float, help='Dwell time per channel, in milliseconds', default='100')
-common.parser.add_argument('-r', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
+common.parser.add_argument('-R', '--rate', type=str, help='RF rate', choices=['250K', '1M', '2M'], default='2M')
+common.parser.add_argument('-A', '--addrlen', type=int, choices=[2, 3, 4, 5], default=5)
 common.parse_and_init()
 
 # Parse the prefix addresses
@@ -36,7 +37,8 @@ if len(prefix_address) > 5:
 rate = common.RF_RATE_2M
 if common.args.rate == '1M': rate = common.RF_RATE_1M
 elif common.args.rate == '250K': rate = common.RF_RATE_250K
-common.radio.enter_promiscuous_mode(prefix_address, rate=rate)
+addrlen = common.args.addrlen
+common.radio.enter_promiscuous_mode(prefix_address, rate=rate, addrlen=addrlen)
 
 # Convert dwell time from milliseconds to seconds
 dwell_time = common.args.dwell / 1000
@@ -57,10 +59,10 @@ while True:
 
   # Receive payloads
   value = common.radio.receive_payload()
-  if len(value) >= 5:
+  if len(value) >= addrlen:
 
     # Split the address and payload
-    address, payload = value[0:5], value[5:]
+    address, payload = value[0:addrlen], value[addrlen:]
 
     # Log the packet
     logging.info('{0: >2}  {1: >2}  {2}  {3}'.format(
