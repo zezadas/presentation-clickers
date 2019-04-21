@@ -6,5 +6,6 @@ class Protocols(Enum):
   Canon = 'canon'
   TBBSC = 'tbbsc'
   RII = 'rii'
+  Logitech = 'logitech'
   def __str__(self):
     return self.value

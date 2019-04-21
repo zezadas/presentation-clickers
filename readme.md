@@ -23,8 +23,34 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 | DinoFire | [D06-DF-US](https://www.amazon.com/DinoFire-Presenter-Hyperlink-PowerPoint-Presentation/dp/B01410YNAM/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | TBBSC | [DSIT-60](https://www.amazon.com/gp/product/B01MY95EKA/) | [TBBSC DSIT-60](#TBBSC-DSIT-60) | BK2451 | 2019-04-21 |
 | Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | BK2451 | 2019-04-21 |
+| Logitech | [R400]() | Logitech Unencrypted | nRF24 | 2019-04-21 |
 
 ## Protocols
+
+### Logitech (Unencrypted)
+
+#### Overview
+
+This is the standard unencrypted Logitech protocol, used by the R400/R800.
+
+#### Device Discovery
+
+You can find the address of your Logitech R400/R800 using `nrf24-scanner` as follows:
+
+```sudo ./tools/nrf24-scanner.py -c {2..74..3} -l```
+
+Packets should look something like this:
+
+```
+[2019-04-21 12:58:43.466]  32   0  9D:9E:95:52:07  
+[2019-04-21 12:58:43.620]  32  10  9D:9E:95:52:07  00:C1:00:00:00:00:00:00:00:3F
+```
+
+#### Injection
+
+Inject the test keystroke sequence into a specific Logitech R400/R800 dongle (address `9D:9E:95:52:07`):
+
+```sudo ./tools/preso-injector.py -l -f logitech -a 9D:9E:95:52:07```
 
 ### Rii Wireless Presenter
 
