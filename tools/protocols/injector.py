@@ -14,9 +14,9 @@ class Injector(object):
       "=": 0x2e,
       "[": 0x2f,
       "]": 0x30,
-      "|": 0x31,
+      "\\": 0x31,
       ";": 0x33,
-      "\"": 0x34,
+      "'": 0x34,
       "`": 0x35,
       ",": 0x36,
       ".": 0x37,
@@ -38,9 +38,9 @@ class Injector(object):
       "+": 0x2e,
       "{": 0x2f,
       "}": 0x30,
-      "\\": 0x31,
+      "|": 0x31,
       ":": 0x33,
-      "'": 0x34,
+      "\"": 0x34,
       "~": 0x35,
       "<": 0x36,
       ">": 0x37,
@@ -102,6 +102,5 @@ class Injector(object):
   def start_injection(self):
     self.protocol.start_injection()
         
-
   def stop_injection(self):
     self.protocol.stop_injection()        

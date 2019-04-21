@@ -7,5 +7,6 @@ class Protocols(Enum):
   TBBSC = 'tbbsc'
   RII = 'rii'
   Logitech = 'logitech'
+  LogitechEncrypted = 'logitech-enc'
   def __str__(self):
     return self.value
