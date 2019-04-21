@@ -2,7 +2,7 @@
 
 I was in the mood for some RF reverse-engineering, so I ordered a few presentation clickers and had a bit of fun. 
 
-This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 10 common presentation clickers.
+This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a few years ago at Bastille). I've added support for a few new transceivers/protocols, and included keystroke injection POCs for 12 common presentation clickers.
 
 ## History
 
@@ -23,11 +23,12 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 | DinoFire | [D06-DF-US](https://www.amazon.com/DinoFire-Presenter-Hyperlink-PowerPoint-Presentation/dp/B01410YNAM/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | TBBSC | [DSIT-60](https://www.amazon.com/gp/product/B01MY95EKA/) | [TBBSC DSIT-60](#TBBSC-DSIT-60) | BK2451 | 2019-04-21 |
 | Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | BK2451 | 2019-04-21 |
-| Logitech | [R400]() | Logitech Unencrypted | nRF24 | 2019-04-21 |
+| Logitech | [R400](https://www.amazon.com/Logitech-Wireless-Presenter-Presentation-Pointer/dp/B002GHBUTK/) | [Logitech Unencrypted](#Logitech-Unencrypted) | nRF24 | 2019-04-21 |
+| Logitech | [R800](https://www.amazon.com/Logitech-Professional-Presenter-Presentation-Wireless/dp/B002GHBUTU/) | [Logitech Unencrypted](#Logitech-Unencrypted) | nRF24 | 2019-04-21 |
 
 ## Protocols
 
-### Logitech (Unencrypted)
+### Logitech Unencrypted
 
 #### Overview
 
