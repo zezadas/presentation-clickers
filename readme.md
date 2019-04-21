@@ -21,8 +21,83 @@ This is a fork of [nrf-research-firmware](readme-original.md) (which I wrote a f
 | ESYWEN | [Wireless Presenter](https://www.amazon.com/Wireless-Presenter-ESYWEN-Presentation-PowerPoint/dp/B07D7X7X2M/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | Red Star Tech | [PR-819](https://www.amazon.com/Red-Star-Tec-Presentation-PR-819/dp/B015J5KB3G/) | [HS304](#HS304) | HS304 | 2019-04-20 |
 | DinoFire | [D06-DF-US](https://www.amazon.com/DinoFire-Presenter-Hyperlink-PowerPoint-Presentation/dp/B01410YNAM/) | [HS304](#HS304) | HS304 | 2019-04-20 |
+| TBBSC | [DSIT-60](https://www.amazon.com/gp/product/B01MY95EKA/) | [TBBSC DSIT-60](#TBBSC-DSIT-60) | BK2451 | 2019-04-21 |
+| Rii | [Wireless Presenter](https://www.amazon.com/Rii-Wireless-Presenter-PowerPoint-Presentation/dp/B07H9VSG3G/) | [Rii Wireless Presenter](#Rii-Wireless-Presenter) | 
 
 ## Protocols
+
+### Rii Wireless Presenter
+
+#### Overview
+
+The Rii Wireless Presenter (rounded-pen) is based on the BK2451 (which seems to be a nRF24 clone). This looks like a generic protocol, based on the prevalence of sister devices, so I'll probably recategorize this after getting some more data.
+
+It is functionally an unencrypted wireless keyboard, vulnerable to keystroke injection.
+
+#### PHY
+
+The Wireless Presenter (rounded-pen) uses 250Kb/s nRF24 Enhanced Shockburst (w/o ACKs it seems), and a 5-byte address. The device I tested was observed to be camping at 2425 MHz, but it seems to use some sort of frequency-agility scheme. In practice, it is necessary to send some dummy packets on the target channel before sending keystroke packets.
+
+I suspect there is some channel hopping going on, which I haven't characterized, but targeting a single channel is sufficient to demonstrate keystroke injection.
+
+#### Device Discovery
+
+You can find the address of your Wireless Presenter (rounded-pen) using `nrf24-scanner` as follows:
+
+```sudo ./tools/nrf24-scanner.py -c 25 -l -R 250K -A 3```
+
+*Note that yours might be on another channel.*
+
+Packets should look something like this:
+
+```
+[2019-04-21 11:50:33.116]  25   3  6D:8C:01:14:25  4B:51:00
+[2019-04-21 11:50:33.212]  25   3  6D:8C:01:14:25  4C:00:00
+[2019-04-21 11:50:33.522]  25   3  6D:8C:01:14:25  4D:51:00
+[2019-04-21 11:50:33.565]  25   3  6D:8C:01:14:25  4E:00:00
+```
+
+#### Injection
+
+Inject the test keystroke sequence into a specific Rii dongle (address `6D:8C:01:14:25`):
+
+```sudo ./tools/preso-injector.py -l -f rii -a 6D:8C:01:14:25```
+
+### TBBSC DSIT-60
+
+#### Overview
+
+The TBBSC DSIT-60 is based on the BK2451 (which seems to be a nRF24 clone). There are apparent sister devices (i.e. [this one](https://www.amazon.com/VinOffice-Presenter-Rechargeable-PowerPoint-Presentation/dp/B07KLHQ811/)) which I haven't tested. For the moment I am categorizing this as a distinct protocol, but that will likely change once I test the sister device(s).
+
+It is functionally an unencrypted wireless keyboard, vulnerable to keystroke injection.
+
+#### PHY
+
+The DSIT-60 uses 250Kb/s nRF24 Enhanced Shockburst (or at least an OTA equivalent) with a 3-byte address. The device I tested was observed to be camping at 2406 MHz, but I'm not sure what other channels it might use.
+
+#### Device Discovery
+
+You can find the address of your DSIT-60 using `nrf24-scanner` as follows:
+
+```sudo ./tools/nrf24-scanner.py -c 6 -l -R 250K -A 3```
+
+*Note that yours might be on another channel, or there might be some frequency agility 
+retuning that I haven't observed.*
+
+Packets should look something like this:
+
+```
+
+[2019-04-21 10:33:44.264]   6   4  87:02:09  0B:42:00:2B
+[2019-04-21 10:33:44.269]   6   4  87:02:09  0B:42:00:2B
+[2019-04-21 10:33:52.477]   6   4  87:02:09  01:42:00:28
+```
+
+#### Injection
+
+Inject the test keystroke sequence into a specific TBBSC DSIT-60 dongle (address `87:02:09`):
+
+```sudo ./tools/preso-injector.py -l -f tbbsc -a 87:02:09```
 
 ### AmazonBasics P-001
 
