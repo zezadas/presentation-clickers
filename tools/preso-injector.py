@@ -37,6 +37,10 @@ elif common.args.family == Protocols.Logitech:
   if len(address) != 5:
     raise Exception('Invalid address: {0}'.format(common.args.address))  
   p = Logitech(address)
+if common.args.family == Protocols.LogitechEncrypted:
+  if len(address) != 5:
+    raise Exception('Invalid address: {0}'.format(common.args.address))  
+  p = Logitech(address, encrypted=True)
 
 # Initialize the injector instance
 i = Injector(p)
