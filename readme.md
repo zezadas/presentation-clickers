@@ -44,7 +44,7 @@ I suspect there is some channel hopping going on, which I haven't characterized,
 
 You can find the address of your Wireless Presenter (rounded-pen) using `nrf24-scanner` as follows:
 
-```sudo ./tools/nrf24-scanner.py -c 25 -l -R 250K -A 3```
+```sudo ./tools/nrf24-scanner.py -c 25 -l -R 250K -A 5```
 
 *Note that yours might be on another channel.*
 
