@@ -8,6 +8,7 @@ from protocols import *
 common.init_args('./nrf24-scanner.py')
 common.parser.add_argument('-a', '--address', type=str, help='Target address')
 common.parser.add_argument('-f', '--family', required=True, type=Protocols, choices=list(Protocols), help='Protocol family')
+common.parser.add_argument('-m', '--magicbyte', type=str, help='HS304 MagicByte')
 common.parse_and_init()
 
 # Parse the address
@@ -16,9 +17,15 @@ if common.args.address is not None:
   address = common.args.address.replace(':', '').decode('hex')[::-1]
   address_string = ':'.join('{:02X}'.format(ord(b)) for b in address[::-1])
 
+# Parse the MagicByte
+magicbyte = ''
+if common.args.magicbyte is not None:
+  little_hex = bytearray.fromhex(common.args.magicbyte)
+  magicbyte = str(little_hex)
+
 # Initialize the target protocol
 if common.args.family == Protocols.HS304:
-  p = HS304()
+  p = HS304(magicbyte)
 elif common.args.family == Protocols.Canon:
   p = Canon()
 elif common.args.family == Protocols.TBBSC:

@@ -1,3 +1,14 @@
+This is a fork of [presentation-clickers](https://github.com/marcnewlin/presentation-clickers)
+
+Some presentation clickers using HS304 use different magic bytes. This fork tries to solve this issue.
+
+## How to use?
+ - ```sudo ./tools/preso-scanner.py -f hs304```
+ Check the output. At the end of the line the following text can be read: .. Magic Byte: 0xdafc
+ Once you have the magic byte, pass it to injector script.
+ - ```sudo ./tools/preso-injector.py -f hs304 -m dafc```
+ That's all!! Hope it works.
+
 ## Presentation Clickers
 
 I was in the mood for some RF reverse-engineering, so I ordered a few presentation clickers and had a bit of fun. 

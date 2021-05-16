@@ -10,9 +10,10 @@ import time
 class HS304(Protocol):
 
   # Constructor
-  def __init__(self):
+  def __init__(self,magicbyte="\x31\x78"):
     super(HS304, self).__init__("HS304")
-
+    
+    self.magicbyte=magicbyte
     self.CRC16 = crcmod.mkCrcFun(0x11021, initCrc=0x422e, rev=False, xorOut=0x0000)
     self.CRC8 = crcmod.mkCrcFun(0x101, initCrc=0x1d, rev=False, xorOut=0x00)
 
@@ -49,8 +50,8 @@ class HS304(Protocol):
   def send_hid_event(self, scan_code=0, shift=False, ctrl=False, win=False):
 
     # Skeleton payload (with two "magic" bytes)
-    payload = "\x00\x31\x78\x00\x00\x00\x00\x00"
-
+    payload = "\x00"+self.magicbyte+"\x00\x00\x00\x00\x00"
+    
     # Sync word
     sync = "\x44\x75\x94\xE1"
 
@@ -106,13 +107,16 @@ class HS304(Protocol):
       # Parse the payload
       sync, payload = value[0:4], value[4:]
       code = self.LUT0.index(payload[0])
+      magicbyte= payload[1:3]
       mouse_b = self.LUT3.index(payload[3])
       mouse_x = self.LUT4.index(payload[4])
       mouse_y = self.LUT5.index(payload[5])
       modifiers = self.LUT6.index(payload[6])
-
+      
+      if (code==0 and mouse_b==0 and mouse_x==0 and mouse_y==0 and modifiers==0):
+        continue
       # Log the packet
-      logging.info("Scan Code: %02x, Modifier: %02x, Mouse Button: %02x, Mouse X: %i, Mouse Y: %i" % (code, mouse_b, mouse_x, mouse_y, modifiers))
+      logging.info("Scan Code: %02x, Modifier: %02x, Mouse Button: %02x, Mouse X: %i, Mouse Y: %i, Magic Byte: 0x%02x%02x" % (code, mouse_b, mouse_x, mouse_y, modifiers, magicbyte[0],magicbyte[1]))      
 
 
   # Enter injection mode
