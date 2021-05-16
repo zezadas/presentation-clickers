@@ -1,4 +1,4 @@
-This is a fork of [presentation-clickers](https://github.com/marcnewlin/presentation-clickers)
+This is a fork of [presentation-clickers](https://github.com/marcnewlin/presentation-clickers).
 
 Some presentation clickers using HS304 use different magic bytes. This fork tries to solve this issue.
 
