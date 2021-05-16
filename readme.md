@@ -5,7 +5,7 @@ Some presentation clickers using HS304 use different magic bytes. This fork trie
 ## How to use?
  
  - ```sudo ./tools/preso-scanner.py -f hs304```
- Check the output. At the end of the line the following text can be read: .. Magic Byte: 0xdafc
+ Check the output. At the end of the line the following text can be read: ```.. Magic Byte: 0xdafc```
  
  Once you have the magic byte, pass it to injector script.
  - ```sudo ./tools/preso-injector.py -f hs304 -m dafc```
